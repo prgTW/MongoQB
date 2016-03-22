@@ -7,6 +7,10 @@ namespace MongoQB;
  */
 class Exception extends \Exception {}
 
+/**
+ * @deprecated
+ * @see anything else!
+ */
 class Builder
 {
     /**
@@ -38,6 +42,9 @@ class Builder
      * @access protected
      */
     protected $_dbhandle = null;
+
+    /** @var string */
+    protected $_readPreference;
 
     /**
      * Database host.
@@ -150,18 +157,16 @@ class Builder
     /**
      * Constructor
      *
-     * Automatically check if the Mongo PECL extension has been
-     *  installed/enabled.
+     * Automatically check if you are lucky or not
      *
      * @access public
      * @return void
      */
     public function __construct(array $config, $connect = true)
     {
-        if ( ! class_exists('\Mongo')) {
+        if ( ! class_exists('\MongoClient')) {
             // @codeCoverageIgnoreStart
-            throw new \MongoQB\Exception('The MongoDB PECL extension has not been
-             installed or enabled');
+            throw new \MongoQB\Exception('\MongoClient not found :)');
             // @codeCoverageIgnoreEnd
         }
 
@@ -1502,25 +1507,21 @@ class Builder
 
         } // @codeCoverageIgnoreEnd
 
+        if ($this->_readPreference)
+        {
+            $options['readPreference'] = $this->_readPreference;
+        }
+
         try {
             // @codeCoverageIgnoreStart
-            if (phpversion('Mongo') >= 1.3)
-            {
-                unset($options['persist']);
-                $this->_connection = new \MongoClient($this->_dsn, $options);
-                $this->_dbhandle = $this->_connection->{$this->_dbname};
-            }
-
-            else
-            {
-                $this->_connection = new \Mongo($this->_dsn, $options);
-                $this->_dbhandle = $this->_connection->{$this->_dbname};
-            }
+            unset($options['persist']);
+            $this->_connection = new \MongoClient($this->_dsn, $options);
+            $this->_dbhandle = $this->_connection->{$this->_dbname};
             // @codeCoverageIgnoreEnd
             return $this;
         }
         // @codeCoverageIgnoreStart
-        catch (MongoConnectionException $Exception) {
+        catch (\MongoConnectionException $Exception) {
                 throw new \MongoQB\Exception('Unable to connect to MongoDB: ' .
                  $Exception->getMessage());
                 // @codeCoverageIgnoreEnd
@@ -1545,6 +1546,7 @@ class Builder
         $this->_persistKey = trim($this->_configData['persist_key']);
         $this->_replicaSet = $this->_configData['replica_set'];
         $this->_querySafety = trim($this->_configData['query_safety']);
+        $this->_readPreference = trim($this->_configData['readPreference']);
 
         $parts = parse_url($this->_dsn);
 
