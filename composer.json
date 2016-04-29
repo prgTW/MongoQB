@@ -1,7 +1,7 @@
 {
 	"name": "prgtw/mongoqb",
 	"description": "Obsolete Mongo Query Builder",
-	"version": "6.6.6",
+	"version": "6.6.7",
 	"homepage": "https://github.com/alexbilbie/MongoQB",
 	"license": "MIT",
 	"require": {

@@ -24,7 +24,8 @@ class Builder
         'persist'   =>  true,
         'persist_key'   =>  'mongoqb',
         'replica_set'   =>  false,
-        'query_safety'  =>  'w'
+        'query_safety'  =>  'w',
+        'readPreference' => ''
     );
 
     /**
