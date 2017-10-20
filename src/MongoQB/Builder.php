@@ -20,7 +20,7 @@ class Builder
      * @access protected
      */
     protected $_configData = array(
-        'hostname'  =>  'mongodb://localhost:27017/admin',
+        'dsn'  =>  'mongodb://localhost:27017/admin',
         'persist'   =>  true,
         'persist_key'   =>  'mongoqb',
         'replica_set'   =>  false,
